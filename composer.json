@@ -1,0 +1,8 @@
+{
+	"require": {
+		"enygma/modler": "1.2",
+		"aura/sql": "2.1.0",
+		"fastfeed/fastfeed": "0.3.0",
+		"slim/slim": "2.4.3"
+	}
+}

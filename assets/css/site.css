@@ -1,0 +1,16 @@
+h2.header {
+	margin-top: 0px;
+	text-align: center;
+	color: #BD3E25
+}
+img.index-target-img {
+	float: left;
+	margin-right: 30px;
+	margin-top: 10px;
+	margin-bottom: 13px
+}
+footer.default-footer {
+	text-align: center;
+	background-color: #E45136;
+	padding: 3px;
+}
