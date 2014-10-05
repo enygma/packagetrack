@@ -23,7 +23,7 @@
 						</p>
 						<p>
 							<a href="http://packagetracker.io/feed/<?php echo $hash; ?>">
-								http://packagetracker.io/feed/<?php echo $hash; ?>
+								http://packagetrack.io/feed/<?php echo $hash; ?>
 							</a>
 						</p>
 					</div>
