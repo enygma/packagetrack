@@ -30,6 +30,11 @@ $app->post('/upload', function() use ($app, $packageScan, $pdo) {
 		$feedId = $packageScan->insertFeed($hash);
 
 		foreach ($contents->packages as $package) {
+			// see if we have any for that package
+			if ($packageScan->packageExists($package->name) == false) {
+				$packageScan->getPackageRelease($package->name);
+			}
+
 			$data = array(
 				'name' => $package->name,
 				'feedId' => $feedId

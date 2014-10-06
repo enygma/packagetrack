@@ -24,12 +24,9 @@ $items = $fastFeed->fetch('packagist-releases');
 foreach ($items as $item) {
 	preg_match('/(.*?) \((.+)\)/', $item->getName(), $matches);
 	$name = $matches[1];
-	$version = str_replace('v', '', $matches[2]);
 
-	$parts = explode('.', $version);
-	$majorVersion = $parts[0];
-	$minorVersion = $parts[1];
-	$patchVersion = (isset($parts[2]) == true) ? $parts[2] : '';
+	list($version, $majorVersion, $minorVersion, $patchVersion)
+		= $packageScan->parseVersion($matches[2]);
 
 	$data = array(
 		'name' => $name,
@@ -43,18 +40,7 @@ foreach ($items as $item) {
 		'author' => $item->getAuthor()
 	);
 
-	$columns = array();
-	$bind = array();
-	foreach ($data as $column => $d) {
-		$columns[] = $column;
-		$bind[] = ':'.$column;
-	}
-	// Be sure it doesn't already exist
-	$sql = 'select id from releases where name = :name and version = :version';
-	$result = $pdo->fetchAll($sql, array('name' => $name, 'version' => $version));
-	if (count($result) == 0) {
+	if ($packageScan->insertRelease($data, $name, $version)) {
 		echo 'Adding '.$name." (".$version.")\n";
-		$sql = 'insert into releases ('.implode(',', $columns).', date_added) values ('.implode(',', $bind).', NOW())';
-		$result = $pdo->perform($sql, $data);
 	}
 }

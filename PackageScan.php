@@ -62,6 +62,79 @@ class PackageScan
 		$results = $pdo->fetchAll($sql);
 		return $results;
 	}
+
+	public function packageExists($packageName)
+	{
+		$sql = 'select count(id) as ct from releases where lower(name) = :name';
+		$results = $this->getPdo()->fetchAll($sql, array('name' => $packageName));
+		return ($results[0]['ct'] > 0) ? true : false;
+	}
+
+	public function getPackageRelease($packageName)
+	{
+		try {
+			$contents = file_get_contents('https://github.com/'.$packageName.'/releases.atom');
+		} catch (\Exception $e) {
+			return false;
+		}
+
+		$data = simplexml_load_string($contents);
+		$item = $data->entry[0];
+
+		$version = (string)$item->title;
+		$author = $item->author;
+
+		list($version, $majorVersion, $minorVersion, $patchVersion)
+			= $this->parseVersion($version);
+
+		$data = array(
+			'name' => $packageName,
+			'version' => $version,
+			'major_version' => $majorVersion,
+			'minor_version' => $minorVersion,
+			'patch_version' => $patchVersion,
+			'date_posted' => date('Y-m-d H:i:s', strtotime($item->updated)),
+			'description' => strip_tags($item->content),
+			'source' => 'https://github.com/'.$packageName,
+			'author' => (string)$author->name
+		);
+		$this->insertRelease($data, $packageName, $version);
+	}
+
+	public function parseVersion($version)
+	{
+		$version = str_replace('v', '', $version);
+		$parts = explode('.', $version);
+
+		$majorVersion = $parts[0];
+		$minorVersion = $parts[1];
+		$patchVersion = (isset($parts[2]) == true) ? $parts[2] : '';
+
+		return array(
+			$version, $majorVersion,
+			$minorVersion, $patchVersion
+		);
+	}
+
+	public function insertRelease($data, $name, $version)
+	{
+		$columns = array();
+		$bind = array();
+		foreach ($data as $column => $d) {
+			$columns[] = $column;
+			$bind[] = ':'.$column;
+		}
+		// Be sure it doesn't already exist
+		$sql = 'select id from releases where name = :name and version = :version';
+		$result = $this->getPdo()->fetchAll($sql, array('name' => $name, 'version' => $version));
+
+		if (count($result) == 0) {
+			$sql = 'insert into releases ('.implode(',', $columns).', date_added) values ('.implode(',', $bind).', NOW())';
+			$result = $this->getPdo()->perform($sql, $data);
+			return true;
+		}
+		return false;
+	}
 }
 
 ?>
