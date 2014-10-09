@@ -19,6 +19,16 @@ $packageScan = new PackageScan($pdo);
 $queueItems = $packageScan->getFromQueue();
 
 foreach ($queueItems as $item) {
+    // be sure it's HTTP/HTTPS
+    $url = parse_url($item['package_url']);
+
+    // If it's internal or not http/https, we can't really get it
+    if ($url['scheme'] !== 'http' && $url['scheme'] !== 'https') {
+        $packageScan->removeFromQueue($name);
+        continue;
+    }
+
+
     $url = str_replace('.git', '/releases.atom', $item['package_url']);
     $feed = Feed::loadAtom($url);
     $count = 0;
