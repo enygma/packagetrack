@@ -189,10 +189,12 @@ class PackageScan
 	public function addToQueue($package)
 	{
 		$author = (isset($package->authors)) ? $package->authors[0]->name : '';
+		$description = (isset($package->description)) ? $package->description : '';
+
 		$data = array(
 			'package_url' => $package->source->url,
 			'package_name' => $package->name,
-			'package_description' => $package->description,
+			'package_description' => $description,
 			'package_source' => str_replace('.git', '', $package->source->url),
 			'package_author' => $author
 		);
