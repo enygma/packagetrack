@@ -215,7 +215,7 @@ class PackageScan
 	 * @param integer $limit A limit on the number of queue items to fetch
 	 * @return array Found queue records
 	 */
-	public function getFromQueue($limit = 10)
+	public function getFromQueue($limit = 20)
 	{
 		$sql = 'select * from queue where locked = 0 limit '.$limit;
 		$result = $this->getPdo()->fetchAll($sql);
