@@ -28,3 +28,15 @@ CREATE TABLE `feed` (
 	ID INT NOT NULL AUTO_INCREMENT,
 	PRIMARY KEY(ID)
 );
+
+CREATE TABLE `queue` (
+	package_url VARCHAR(200),
+	package_name VARCHAR(200),
+	package_description TEXT,
+	package_source VARCHAR(200),
+	package_author VARCHAR(200),
+	date_added DATETIME,
+	locked INT,
+	ID INT NOT NULL AUTO_INCREMENT,
+	PRIMARY KEY(ID)
+);
