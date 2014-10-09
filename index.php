@@ -28,11 +28,13 @@ $app->post('/upload', function() use ($app, $packageScan, $pdo) {
 	if ($contents !== false) {
 		$hash = hash('sha1', $lockContent.'|'.time());
 		$feedId = $packageScan->insertFeed($hash);
+		$queued = array();
 
 		foreach ($contents->packages as $package) {
-			// see if we have any for that package
+			// see if we have any for that package, if not queue it up
 			if ($packageScan->packageExists($package->name) == false) {
-				$packageScan->getPackageRelease($package->name);
+				$queued[] = $package->name;
+				$packageScan->addToQueue($package);
 			}
 
 			$data = array(
@@ -43,7 +45,10 @@ $app->post('/upload', function() use ($app, $packageScan, $pdo) {
 		}
 	}
 	$hash = $packageScan->getHashByFeedId($feedId);
-	$app->render('upload.php', array('hash' => $hash));
+	$app->render('upload.php', array(
+		'hash' => $hash,
+		'queued' => $queued
+	));
 });
 
 // Feed route ----------
