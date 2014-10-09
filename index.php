@@ -47,6 +47,12 @@ $app->post('/upload', function() use ($app, $packageScan, $pdo) {
 		}
 	}
 	$hash = $packageScan->getHashByFeedId($feedId);
+
+	// Be sure we remove our tmp file
+	if (is_file($_FILES['composerlock']['tmp_name'])) {
+		unlink($_FILES['composerlock']['tmp_name']);
+	}
+
 	$app->render('upload.php', array(
 		'hash' => $hash,
 		'queued' => $queued
