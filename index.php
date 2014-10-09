@@ -15,7 +15,9 @@ $pdo = new ExtendedPdo(
 $packageScan = new PackageScan($pdo);
 
 // Application ------------
-$app = new \Slim\Slim();
+$app = new \Slim\Slim(array(
+	'debug' => false
+));
 
 $app->get('/', function() use ($app) {
 	$app->render('index.php');
@@ -69,4 +71,7 @@ $app->get('/feed/:hash', function($hash) use ($app, $packageScan, $pdo) {
 	));
 });
 
+$app->error(function() use ($app) {
+	return $app->render('error.php');
+});
 $app->run();
