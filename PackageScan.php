@@ -2,22 +2,48 @@
 
 class PackageScan
 {
+	/**
+	 * Aura SQL ExtendedPdo instance (PDO)
+	 * @var \Aura\Sql\ExtendedPdo
+	 */
 	private $pdo;
 
-	public function __construct($pdo)
+	/**
+	 * Init the object and set the PDO instance
+	 *
+	 * @param \Aura\Sql\ExtendedPdo $pdo Aura SQL instance
+	 */
+	public function __construct(\Aura\Sql\ExtendedPdo $pdo)
 	{
 		$this->setPdo($pdo);
 	}
 
-	public function setPdo($pdo)
+	/**
+	 * Set PDO instance
+	 *
+	 * @param \Aura\Sql\ExtendedPdo $pdo Aura SQL instance
+	 */
+	public function setPdo(\Aura\Sql\ExtendedPdo $pdo)
 	{
 		$this->pdo = $pdo;
 	}
+
+	/**
+	 * Get the current PDO instance
+	 *
+	 * @return \Aura\Sql\ExtendedPdo instance
+	 */
 	public function getPdo()
 	{
 		return $this->pdo;
 	}
 
+	/**
+	 * Insert the feed data
+	 *
+	 * @param string $hash Unique hash to describe the feed
+	 * @return integer Insert ID of result
+	 */
 	public function insertFeed($hash)
 	{
 		$pdo = $this->getPdo();
@@ -26,6 +52,12 @@ class PackageScan
 		return $pdo->lastInsertId();
 	}
 
+	/**
+	 * Inset the feed package relational data
+	 *
+	 * @param array $data Feed data to insert
+	 * @return boolean Result of insert
+	 */
 	public function insertFeedPackage($data)
 	{
 		$sql = 'insert into feed_packages (name, feed_id, date_added) values (:name, :feedId, NOW())';
@@ -33,6 +65,12 @@ class PackageScan
 		return $result;
 	}
 
+	/**
+	 * Get the hash data from the feed by ID
+	 *
+	 * @param integer $feedId Feed ID to locate
+	 * @return array Hash data
+	 */
 	public function getHashByFeedId($feedId)
 	{
 		$sql = 'select hash from feed where id = :id';
@@ -40,12 +78,24 @@ class PackageScan
 		return $result[0]['hash'];
 	}
 
+	/**
+	 * Update the "last viewed" value of a feed by hash
+	 *
+	 * @param string $hash Feed unique hash
+	 * @return boolean Result of update
+	 */
 	public function updateLastViewed($hash)
 	{
 		$sql = 'update feed set last_view = NOW() where hash = :hash';
 		return $this->getPdo()->perform($sql, array('hash' => $hash));
 	}
 
+	/**
+	 * Get the packages for the given feed hash
+	 *
+	 * @param string $hash Given hash
+	 * @return array Feed release results
+	 */
 	public function getFeedPackages($hash)
 	{
 		$sql = 'select f.id, fp.name from feed f, feed_packages fp where f.hash = :hash'
@@ -55,6 +105,12 @@ class PackageScan
 		return $results;
 	}
 
+	/**
+	 * Get the releases for the given package name(s)
+	 *
+	 * @param array $packages Set of package names
+	 * @return array Package records if found
+	 */
 	public function getReleaseByPackage(array $packages)
 	{
 		$pdo = $this->getPdo();
@@ -63,6 +119,12 @@ class PackageScan
 		return $results;
 	}
 
+	/**
+	 * Check to see if a package already exists in the releases table
+	 *
+	 * @param string $packageName Package name
+	 * @return boolean True if found, false if not
+	 */
 	public function packageExists($packageName)
 	{
 		$sql = 'select count(id) as ct from releases where lower(name) = :name';
@@ -70,37 +132,12 @@ class PackageScan
 		return ($results[0]['ct'] > 0) ? true : false;
 	}
 
-	public function getPackageRelease($packageName)
-	{
-		try {
-			$contents = file_get_contents('https://github.com/'.$packageName.'/releases.atom');
-		} catch (\Exception $e) {
-			return false;
-		}
-
-		$data = simplexml_load_string($contents);
-		$item = $data->entry[0];
-
-		$version = (string)$item->title;
-		$author = $item->author;
-
-		list($version, $majorVersion, $minorVersion, $patchVersion)
-			= $this->parseVersion($version);
-
-		$data = array(
-			'name' => $packageName,
-			'version' => $version,
-			'major_version' => $majorVersion,
-			'minor_version' => $minorVersion,
-			'patch_version' => $patchVersion,
-			'date_posted' => date('Y-m-d H:i:s', strtotime($item->updated)),
-			'description' => strip_tags($item->content),
-			'source' => 'https://github.com/'.$packageName,
-			'author' => (string)$author->name
-		);
-		$this->insertRelease($data, $packageName, $version);
-	}
-
+	/**
+	 * Parse the version into major, minor and patch values
+	 *
+	 * @param string $version Full version value
+	 * @return array Version information broken up
+	 */
 	public function parseVersion($version)
 	{
 		$version = str_replace('v', '', $version);
@@ -116,6 +153,14 @@ class PackageScan
 		);
 	}
 
+	/**
+	 * Insert the release information
+	 *
+	 * @param array $data Release data
+	 * @param string $name Package name
+	 * @param string $version Package release version
+	 * @return boolean True on insert, false if already found
+	 */
 	public function insertRelease($data, $name, $version)
 	{
 		$columns = array();
@@ -134,6 +179,55 @@ class PackageScan
 			return true;
 		}
 		return false;
+	}
+
+	/**
+	 * Add the given package to the queue list
+	 *
+	 * @param object $package Package object (from the Packagist feed)
+	 */
+	public function addToQueue($package)
+	{
+		$data = array(
+			'package_url' => $package->source->url,
+			'package_name' => $package->name,
+			'package_description' => $package->description,
+			'package_source' => str_replace('.git', '', $package->source->url),
+			'package_author' => $package->authors[0]->name
+		);
+		$bind = array();
+		$columns = array();
+		foreach ($data as $column => $value) {
+			$columns[] = $column;
+			$bind[] = ':'.$column;
+		}
+
+		$sql = 'insert into queue ('.implode(',', $columns).', date_added, locked) values ('.implode(',', $bind).', NOW(), 0)';
+		$result = $this->getPdo()->perform($sql, $data);
+	}
+
+	/**
+	 * Get the current data from the queue for fetching
+	 *
+	 * @param integer $limit A limit on the number of queue items to fetch
+	 * @return array Found queue records
+	 */
+	public function getFromQueue($limit = 10)
+	{
+		$sql = 'select * from queue where locked = 0 limit '.$limit;
+		$result = $this->getPdo()->fetchAll($sql);
+		return $result;
+	}
+
+	/**
+	 * Remove the package from the queue by name
+	 *
+	 * @param string $packageName Package name (ex. "psecio/iniscan")
+	 */
+	public function removeFromQueue($packageName)
+	{
+		$sql = 'delete from queue where package_name = :packageName';
+		$this->getPdo()->perform($sql, array('packageName' => $packageName));
 	}
 }
 
