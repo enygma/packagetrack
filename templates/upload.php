@@ -16,6 +16,13 @@
 						<img src="/assets/img/target.png" height="95"/>
 					</div>
 					<div class="col-md-7">
+						<?php if (!empty($queued)): ?>
+						<div class="alert alert-warning" role="alert">
+							These packages were not found in our data and have been queued for fetching.
+							As soon as we have them, you will too!<br/><br/>
+							<?php foreach ($queued as $package) { echo '<b>'.$package.'</b><br/>'; } ?>
+						</div>
+						<?php endif; ?>
 						<h2>Your Feed URL</h2>
 						<p>
 							Here's your hand-crafted feed URL, customized to your <code>composer.lock</code>
