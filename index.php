@@ -71,7 +71,8 @@ $app->get('/feed/:hash', function($hash) use ($app, $packageScan, $pdo) {
 	));
 });
 
-$app->error(function() use ($app) {
+$app->error(function(\Exception $e) use ($app) {
+	$app->log->error($e->getMessage());
 	return $app->render('error.php');
 });
 $app->run();
