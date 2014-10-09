@@ -144,7 +144,7 @@ class PackageScan
 		$parts = explode('.', $version);
 
 		$majorVersion = $parts[0];
-		$minorVersion = (isset($parts[1]) ? $parts[1] : '';
+		$minorVersion = (isset($parts[1])) ? $parts[1] : '';
 		$patchVersion = (isset($parts[2]) == true) ? $parts[2] : '';
 
 		return array(
