@@ -23,6 +23,11 @@
 							<?php foreach ($queued as $package) { echo '<b>'.$package.'</b><br/>'; } ?>
 						</div>
 						<?php endif; ?>
+						<p>
+							This feed will provide you with up-to-date information about the packages you currently
+							have installed (based on the `composer.lock` you uploaded). As soon as a new version of the
+							package is released, your feed will update!
+						</p>
 						<h2>Your Feed URL</h2>
 						<p>
 							Here's your hand-crafted feed URL, customized to your <code>composer.lock</code>
