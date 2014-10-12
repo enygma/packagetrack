@@ -223,6 +223,25 @@ class PackageScan
 	}
 
 	/**
+	 * Based on the feed hash, get the list of related items from
+	 * 	the queue
+	 *
+	 * @param string $hash Unique feed hash
+	 * @return array List of queue items
+	 */
+	public function getFeedQueued($hash)
+	{
+		$sql = 'select q.package_name from queue q where'
+			.' q.package_name in ('
+			.' select name from feed_packages where feed_id = '
+			.' (select id from feed where hash = :hash)'
+			.' )';
+
+		$result = $this->getPdo()->fetchAll($sql, array('hash' => $hash));
+		return $result;
+	}
+
+	/**
 	 * Remove the package from the queue by name
 	 *
 	 * @param string $packageName Package name (ex. "psecio/iniscan")
