@@ -59,6 +59,12 @@ $app->post('/upload', function() use ($app, $packageScan, $pdo) {
 	));
 });
 
+$app->get('/queue/:hash', function($hash) use ($app, $packageScan) {
+	$app->render('queue.php', array(
+		'items' => $packageScan->getFeedQueued($hash)
+	));
+});
+
 // Feed route ----------
 $app->get('/feed/:hash', function($hash) use ($app, $packageScan, $pdo) {
 
