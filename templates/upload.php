@@ -13,14 +13,20 @@
 				<div class="row">
 					<div class="col-md-3">
 						<br/>
-						<img src="/assets/img/target.png" height="95"/>
+						<a href="/"><img src="/assets/img/target.png" height="95" border="0"/></a>
 					</div>
 					<div class="col-md-7">
 						<?php if (!empty($queued)): ?>
 						<div class="alert alert-warning" role="alert">
+							<p>
 							These packages were not found in our data and have been queued for fetching.
 							As soon as we have them, you will too!<br/><br/>
 							<?php foreach ($queued as $package) { echo '<b>'.$package.'</b><br/>'; } ?>
+							</p>
+							<p>
+								You can keep up with their queue status
+								<a href="/queue/<?php echo $hash; ?>">over on this page</a>.
+							</p>
 						</div>
 						<?php endif; ?>
 						<p>

@@ -13,7 +13,7 @@
                 <div class="row">
                     <div class="col-md-3">
                         <br/>
-                        <img src="/assets/img/target.png" height="95"/>
+                        <a href="/"><img src="/assets/img/target.png" height="95" border="0"/></a>
                     </div>
                     <div class="col-md-7">
                         <h2>Oops!</h2>

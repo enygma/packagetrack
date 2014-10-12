@@ -33,7 +33,7 @@
 					<br/>
 					<div class="jumbotron">
 					<h2 class="header">Stay Up to Date with PackageTrack!</h2><br/>
-					<img src="/assets/img/target.png" height="100" class="index-target-img"/>
+					<a href="/"><img src="/assets/img/target.png" height="100" class="index-target-img" border="0"/></a>
 					<p>
 						<b>PackageTrack</b> helps you keep track of the latest updates to the
 						<a href="http://packagist.org">Composer</a> packages you use via a handy RSS feed
