@@ -1,8 +1,6 @@
 <?php
-error_log('here');
-
-require_once '../vendor/autoload.php';
-require_once '../PackageScan.php';
+require_once __DIR__.'/../vendor/autoload.php';
+require_once __DIR__.'/../PackageScan.php';
 
 // use FastFeed\Factory;
 use Aura\Sql\ExtendedPdo;
