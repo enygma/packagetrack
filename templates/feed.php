@@ -9,7 +9,7 @@
 		<ttl>30</ttl>
 		<?php foreach ($items as $item): ?>
 		<item>
-			<title><?php echo $item['name']; ?> (<?php echo $item['version']; ?>)</title>
+			<title><![CDATA[<?php echo $item['name']; ?> (<?php echo $item['version']; ?>)]]></title>
 			<guid><?php echo $item['source']; ?></guid>
 			<link><?php echo $item['source']; ?></link>
 			<description><![CDATA[<?php echo $item['description']; ?>]]></description>
