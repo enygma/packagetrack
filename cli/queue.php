@@ -18,6 +18,11 @@ $packageScan = new PackageScan($pdo);
 $queueItems = $packageScan->getFromQueue();
 
 foreach ($queueItems as $item) {
+    // be sure it's github
+    if (strpos($item['package_url'], 'github') == false) {
+        continue;
+    }
+
     // be sure it's HTTP/HTTPS
     $url = parse_url($item['package_url']);
     $name = $item['package_name'];
@@ -32,6 +37,11 @@ foreach ($queueItems as $item) {
     $url = str_replace('.git', '/releases.atom', $item['package_url']);
     $feed = Feed::loadAtom($url);
     $count = 0;
+
+    // If there's no releases....
+    if (count($feed->entry) == 0) {
+        $packageScan->removeFromQueue($name);
+    }
 
     foreach ($feed->entry as $entry) {
         if ($count > 0) { continue; }
