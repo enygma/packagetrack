@@ -2,7 +2,7 @@
 <rss version="2.0">
 	<channel>
 		<title>Package Scan: PHP Package Tracking</title>
-		<link>http://packagescan.io</link>
+		<link>http://packagetrack.io</link>
 		<description>Composer.lock feed: <?php echo $hash; ?></description>
 		<language>en-us</language>
 		<pubDate><?php echo date('r'); ?></pubDate>
