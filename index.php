@@ -75,12 +75,10 @@ $app->post('/usage', function() use ($app, $packageScan) {
 	$packageName = $app->request->post('name');
 	$count = $packageScan->getPackageUsageCount($packageName);
 
-	$data = array(
+	echo json_encode(array(
 		'name' => $packageName,
 		'count' => $count['cid']
-	);
-
-	echo json_encode($data);
+	));
 });
 
 // Feed route ----------
