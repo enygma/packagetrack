@@ -40,3 +40,21 @@ CREATE TABLE `queue` (
 	ID INT NOT NULL AUTO_INCREMENT,
 	PRIMARY KEY(ID)
 );
+
+CREATE TABLE `users` (
+	username VARCHAR(200),
+	password VARCHAR(100),
+	email_address VARCHAR(200),
+	status VARCHAR(10) default 'active',
+	date_added DATETIME,
+	ID INT NOT NULL AUTO_INCREMENT,
+	PRIMARY KEY(ID)
+);
+
+CREATE TABLE `user_feeds` (
+	user_id INT,
+	feed_id INT,
+	date_added DATETIME,
+	ID INT NOT NULL AUTO_INCREMENT,
+	PRIMARY KEY(ID)
+);
