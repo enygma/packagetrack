@@ -53,6 +53,21 @@
                     </form>
                     <br/>
                     <div id="find-results"></div>
+                    <br/>
+                    <div>
+                        <h3>Popular Packages</h3>
+                        <table class="table table-striped">
+                        <thead>
+                            <th>Package Name</th>
+                            <th style="text-align:center">Usage Count</th>
+                        </thead>
+                        <?php
+                        foreach ($packages as $package) {
+                            echo '<tr><td>'.$package['name'].'</td><td style="text-align:center">'.$package['cid'].'</td></tr>';
+                        }
+                        ?>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>

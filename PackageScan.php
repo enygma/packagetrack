@@ -264,6 +264,19 @@ class PackageScan
 		$result = $this->getPdo()->fetchOne($sql, array('packageName' => $packageName));
 		return $result;
 	}
+
+	/**
+	 * Get the popular packages and their usage counts
+	 *
+	 * @param  integer $limit Limit of records returned
+	 * @return array Set of package names and usage counts
+	 */
+	public function getPopularPackages($limit = 10)
+	{
+		$sql = 'select name, count(id) as cid from feed_packages group by name order by cid desc limit '.$limit;
+		$result = $this->getPdo()->fetchAll($sql);
+		return $result;
+	}
 }
 
 ?>

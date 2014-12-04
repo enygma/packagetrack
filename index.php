@@ -66,7 +66,10 @@ $app->get('/queue/:hash', function($hash) use ($app, $packageScan) {
 });
 
 $app->get('/usage', function() use ($app, $packageScan) {
-	$app->render('usage.php');
+	$app->render(
+		'usage.php',
+		array('packages' => $packageScan->getPopularPackages())
+	);
 });
 $app->post('/usage', function() use ($app, $packageScan) {
 	$packageName = $app->request->post('name');
