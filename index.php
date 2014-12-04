@@ -65,6 +65,21 @@ $app->get('/queue/:hash', function($hash) use ($app, $packageScan) {
 	));
 });
 
+$app->get('/usage', function() use ($app, $packageScan) {
+	$app->render('usage.php');
+});
+$app->post('/usage', function() use ($app, $packageScan) {
+	$packageName = $app->request->post('name');
+	$count = $packageScan->getPackageUsageCount($packageName);
+
+	$data = array(
+		'name' => $packageName,
+		'count' => $count['cid']
+	);
+
+	echo json_encode($data);
+});
+
 // Feed route ----------
 $app->get('/feed/:hash', function($hash) use ($app, $packageScan, $pdo) {
 
