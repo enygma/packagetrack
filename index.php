@@ -2,6 +2,7 @@
 
 require_once 'vendor/autoload.php';
 require_once 'PackageScan.php';
+require_once 'User.php';
 
 use FastFeed\Factory;
 use Aura\Sql\ExtendedPdo;
@@ -13,6 +14,7 @@ $pdo = new ExtendedPdo(
 	array(), array()
 );
 $packageScan = new PackageScan($pdo);
+$user = new User($pdo);
 
 // Application ------------
 $app = new \Slim\Slim(array(
@@ -65,6 +67,7 @@ $app->get('/queue/:hash', function($hash) use ($app, $packageScan) {
 	));
 });
 
+// Usage routes ----------
 $app->get('/usage', function() use ($app, $packageScan) {
 	$app->render(
 		'usage.php',
@@ -79,6 +82,46 @@ $app->post('/usage', function() use ($app, $packageScan) {
 		'name' => $packageName,
 		'count' => $count['cid']
 	));
+});
+
+// User routes ---------
+$app->group('/user', function() use ($app, $user) {
+	$app->get('/login', function() use ($app, $user) {
+		$app->render('user/login.php');
+	});
+	$app->get('/register', function() use ($app, $user) {
+		$app->render('user/register.php');
+	});
+	$app->post('/register', function() use ($app, $user) {
+		$data = $app->request->post();
+		$errors = array();
+
+		if (empty($data['username'])) {
+			$errors['username'] = true;
+		}
+		if (empty($data['password'])) {
+			$errors['password'] = true;
+		}
+		if (empty($data['email'])) {
+			$errors['email'] = true;
+		}
+		if (filter_var($data['email'], FILTER_VALIDATE_EMAIL) !== $data['email']) {
+			$errors['email'] = true;
+		}
+
+		if (empty($errors)) {
+			// add the user
+			$user->add($data);
+		}
+
+		$app->render(
+			'user/register.php',
+			array('errors' => $errors, 'data' => $data)
+		);
+	});
+	$app->get('/view', function() use ($app, $user) {
+		$app->render('user/view.php');
+	});
 });
 
 // Feed route ----------
