@@ -71,6 +71,10 @@
 					For security reasons, the contents of your <code>composer.lock</code> file will not be stored. They are only used to
 					generate the unique hash representing your installed packages.
 				</p>
+				<p>
+					<b>Package Use:</b> Interested in seeing how often people are using your package?
+					<a href="/usage">Enter the package name here</a> to get a total count.
+				</p>
 				</div>
 				<div class="col-md-3"></div>
 			</div>
