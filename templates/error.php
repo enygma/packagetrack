@@ -18,7 +18,7 @@
                     <div class="col-md-7">
                         <h2>Oops!</h2>
                         <p>
-                            There was an error in your upload! Please contact <a href="mailto:ccornutt@phpdeveloper.org">ccornutt@phpdeveloper.org</a>
+                            There was an error! Please contact <a href="mailto:ccornutt@phpdeveloper.org">ccornutt@phpdeveloper.org</a>
                             with the problem.
                         </p>
                     </div>
