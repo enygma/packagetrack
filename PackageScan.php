@@ -251,6 +251,19 @@ class PackageScan
 		$sql = 'delete from queue where package_name = :packageName';
 		$this->getPdo()->perform($sql, array('packageName' => $packageName));
 	}
+
+	/**
+	 * Get the usage count of the given package
+	 *
+	 * @param string $packageName Package name (ex: symfony/console)
+	 * @return array Query data result ('cid')
+	 */
+	public function getPackageUsageCount($packageName)
+	{
+		$sql = 'select count(id) as cid from feed_packages where name = :packageName';
+		$result = $this->getPdo()->fetchOne($sql, array('packageName' => $packageName));
+		return $result;
+	}
 }
 
 ?>
